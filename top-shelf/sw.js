@@ -1,6 +1,6 @@
 // Top Shelf service worker: app shell works offline; cover art and fonts are cached as you see them.
 // Bump VERSION whenever you change index.html so phones pick up the new copy.
-const VERSION = 'v1';
+const VERSION = 'v3';
 const SHELL = `shell-${VERSION}`, RUNTIME = 'runtime-v1';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
@@ -22,7 +22,7 @@ self.addEventListener('fetch', e => {
   }
   // Cover art and fonts: cache first
   const isAsset = req.destination === 'image' || req.destination === 'font' || req.destination === 'style' ||
-    /mzstatic\.com|image\.tmdb\.org|covers\.openlibrary\.org|fonts\.(googleapis|gstatic)\.com/.test(url.host);
+    /mzstatic\.com|dzcdn\.net|image\.tmdb\.org|upload\.wikimedia\.org|covers\.openlibrary\.org|fonts\.(googleapis|gstatic)\.com/.test(url.host);
   if (isAsset) {
     e.respondWith(caches.open(RUNTIME).then(c => c.match(req).then(hit => hit || fetch(req).then(res => {
       if (res.ok || res.type === 'opaque') c.put(req, res.clone());

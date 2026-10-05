@@ -353,7 +353,7 @@ function editSheet(i){
 function appSettingsSheet(){
   sheet(`<h4>Settings</h4>
     <h5>Movie &amp; TV search</h5>
-    <p class="help">Works out of the box using Apple's catalogue. For better results with posters, paste a free key from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">TMDB</a> (the "API Key", not the read access token).</p>
+    <p class="help">Works out of the box (movies and shows from Wikipedia). For posters on movies, paste a free key from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">TMDB</a> (the "API Key", not the read access token).</p>
     <form id="keyForm"><div class="field"><label for="tmdbKey">TMDB API key</label><input id="tmdbKey" value="${esc(tmdbKey)}" placeholder="Optional" autocomplete="off" spellcheck="false"></div>
     <div class="actions"><span class="sp"></span><button class="btn" type="submit">Save key</button></div></form>
     <h5>Backup &amp; move</h5>
@@ -392,7 +392,8 @@ const art = (u, px) => (u || '').replace(/\/\d+x\d+bb\./, `/${px}x${px}bb.`);
 function jsonp(url, signal){
   return new Promise((res, rej) => {
     const cb = '__ts' + Math.random().toString(36).slice(2), s = document.createElement('script');
-    const done = () => { delete window[cb]; s.remove(); };
+    const timer = setTimeout(() => { done(); rej(new Error('timeout')); }, 4000);
+    const done = () => { clearTimeout(timer); window[cb] = () => {}; s.remove(); };   // late replies land on a no-op
     window[cb] = d => { done(); res(d); };
     s.onerror = () => { done(); rej(new Error('jsonp')); };
     signal?.addEventListener('abort', () => { done(); rej(new DOMException('aborted','AbortError')); });
@@ -408,19 +409,52 @@ async function tmdb(path, q, signal){
   const r = await fetch(`https://api.themoviedb.org/3/search/${path}?api_key=${encodeURIComponent(tmdbKey)}&query=${encodeURIComponent(q)}&include_adult=false`, { signal });
   if (!r.ok) throw new Error('tmdb'); return (await r.json()).results || [];
 }
+async function deezer(kind, q, sig){
+  const d = await jsonp(`https://api.deezer.com/search/${kind}?q=${encodeURIComponent(q)}&limit=12&output=jsonp`, sig);
+  if (!d || d.error || !Array.isArray(d.data)) throw new Error('deezer');
+  return d.data;
+}
+async function wikiPrefix(q, sig){
+  const one = async term => {
+    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=prefixsearch&gpssearch=${encodeURIComponent(term)}&gpslimit=40&prop=description|pageimages&piprop=thumbnail&pithumbsize=160&redirects=1`, { signal: sig });
+    if (!r.ok) throw new Error('wiki');
+    return Object.values((await r.json()).query?.pages || {}).sort((a, b) => a.index - b.index);
+  };
+  // people often skip "The": "dark knight" should still find "The Dark Knight"
+  const terms = /^the\s/i.test(q) ? [q] : [q, 'The ' + q];
+  return (await Promise.all(terms.map(one))).flat();
+}
 const poster = p => p ? `https://image.tmdb.org/t/p/w154${p}` : '';
 const SEARCH = {
-  songs: async (q, sig) => (await itunes(q, 'song', sig)).map(x => ({ title:x.trackName, sub:x.artistName, img:art(x.artworkUrl100, 120) })),
-  albums: async (q, sig) => (await itunes(q, 'album', sig)).map(x => ({ title:x.collectionName, sub:[x.artistName, yr(x.releaseDate)].filter(Boolean).join(', '), img:art(x.artworkUrl100, 120) })),
+  // Songs & albums: Deezer ranks by popularity (Queen before covers); Apple is the fallback
+  songs: async (q, sig) => {
+    try { return (await deezer('track', q, sig)).map(x => ({ title:x.title, sub:x.artist?.name || '', img:x.album?.cover_medium || '' })); }
+    catch (e) { if (e?.name === 'AbortError') throw e; }
+    return (await itunes(q, 'song', sig)).map(x => ({ title:x.trackName, sub:x.artistName, img:art(x.artworkUrl100, 120) }));
+  },
+  albums: async (q, sig) => {
+    try { return (await deezer('album', q, sig)).map(x => ({ title:x.title, sub:x.artist?.name || '', img:x.cover_medium || '' })); }
+    catch (e) { if (e?.name === 'AbortError') throw e; }
+    return (await itunes(q, 'album', sig)).map(x => ({ title:x.collectionName, sub:[x.artistName, yr(x.releaseDate)].filter(Boolean).join(', '), img:art(x.artworkUrl100, 120) }));
+  },
   movies: async (q, sig) => {
     if (tmdbKey) { try { return (await tmdb('movie', q, sig)).map(x => ({ title:x.title, sub:yr(x.release_date), img:poster(x.poster_path) })); } catch (e) { if (e?.name === 'AbortError') throw e; } }
-    return (await itunes(q, 'movie', sig)).map(x => ({ title:x.trackName, sub:[x.artistName, yr(x.releaseDate)].filter(Boolean).join(', '), img:art(x.artworkUrl100, 150) }));
+    // No key: Wikipedia title search, keeping pages described as films ("2010 film by Christopher Nolan")
+    return (await wikiPrefix(q, sig)).filter(p => /\bfilm\b/i.test(p.description || '') && !/film series|filmography|films\b|soundtrack|album|franchise/i.test(p.description) && !/^List of|\bin film\b/i.test(p.title))
+      .map(p => {
+        const d = p.description, year = (d.match(/\b(18|19|20)\d{2}\b/) || [''])[0], by = (d.match(/\b(?:by|directed by) (.+)$/) || [])[1] || '';
+        return { title: p.title.replace(/\s*\([^)]*film\)$/i, ''), sub: [by, year].filter(Boolean).join(', '), img: p.thumbnail?.source || '' };
+      });
   },
   shows: async (q, sig) => {
     if (tmdbKey) { try { return (await tmdb('tv', q, sig)).map(x => ({ title:x.name, sub:yr(x.first_air_date), img:poster(x.poster_path) })); } catch (e) { if (e?.name === 'AbortError') throw e; } }
-    const seen = new Map();
-    for (const x of await itunes(q, 'tvSeason', sig)) { const k = x.artistName; if (k && !seen.has(k.toLowerCase())) seen.set(k.toLowerCase(), { title:k, sub:yr(x.releaseDate), img:art(x.artworkUrl100, 150) }); }
-    return [...seen.values()];
+    // No key: Wikipedia title search, keeping pages described as TV shows, minus individual seasons and episodes
+    return (await wikiPrefix(q, sig)).filter(p => /(television|TV) (series|show|sitcom|program|programme|drama)|sitcom|miniseries|anime series|animated series/i.test(p.description || '') && !/^(season|episode)|season of|episode of|^list of/i.test(p.description) && !/\bseason \d+|^List of|\(episode\)/i.test(p.title))
+      .map(p => {
+        const d = p.description, yrs = (d.match(/\b(?:19|20)\d{2}(?:\s*[–-]\s*(?:(?:19|20)\d{2}|present))?/) || [''])[0];
+        const kind = d.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\b(?:19|20)\d{2}\b\s*/g, '').replace(/\s+/g, ' ').trim();
+        return { title: p.title.replace(/\s*\([^)]*(series|TV|show|sitcom|miniseries)[^)]*\)$/i, ''), sub: [kind, yrs].filter(Boolean).join(', '), img: p.thumbnail?.source || '' };
+      });
   },
   books: async (q, sig) => {
     const r = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=10&fields=title,author_name,first_publish_year,cover_i`, { signal: sig });
