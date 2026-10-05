@@ -1,6 +1,6 @@
 // Top Shelf service worker: app shell works offline; cover art and fonts are cached as you see them.
 // Bump VERSION whenever you change index.html so phones pick up the new copy.
-const VERSION = 'v3';
+const VERSION = 'v5';
 const SHELL = `shell-${VERSION}`, RUNTIME = 'runtime-v1';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 

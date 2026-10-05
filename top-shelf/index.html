@@ -63,7 +63,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .card:active{transform:scale(.985)}
 .tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .tag svg.i{width:15px;height:15px}
-.card h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance;overflow-wrap:anywhere}
+.card h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance;overflow-wrap:break-word}
 .covers{display:flex;gap:6px}
 .covers img{width:44px;height:44px;border-radius:7px;object-fit:cover;background:var(--surface-2)}
 .mini{list-style:none;margin:0;padding:0;display:grid;gap:4px}
@@ -87,29 +87,29 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .iconbtn:hover{background:var(--surface)}
 .bar .sp,.top .sp{flex:1}
 .lhead{padding-block:6px 18px}
-.lhead h2{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,8vw,42px);line-height:1.02;letter-spacing:-.025em;margin:6px 0 4px;text-wrap:balance;overflow-wrap:anywhere}
+.lhead h2{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,8vw,42px);line-height:1.02;letter-spacing:-.025em;margin:6px 0 4px;text-wrap:balance;overflow-wrap:break-word}
 .lhead .meta{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.03em}
 
 .rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.row{position:relative;display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--r);padding:12px 6px 12px 14px;box-shadow:var(--shadow);transition:transform .18s ease;touch-action:pan-y}
+.row{position:relative;display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:var(--r);padding:12px 2px 12px 12px;box-shadow:var(--shadow);transition:transform .18s ease;touch-action:pan-y}
 .row.dragging{transition:none;z-index:5;box-shadow:0 12px 32px rgba(20,22,40,.22)}
 .rank{font-family:var(--f-display);font-weight:800;font-size:30px;line-height:1;letter-spacing:-.04em;width:44px;flex:none;text-align:center;font-variant-numeric:tabular-nums;color:var(--muted)}
 .row[data-r="1"]{padding-block:18px}
-.row[data-r="1"] .rank{font-size:52px;color:var(--accent);width:56px}
+.row[data-r="1"] .rank{font-size:48px;color:var(--accent);width:50px}
 .row[data-r="2"] .rank,.row[data-r="3"] .rank{font-size:40px;color:var(--ink)}
 .thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;flex:none;background:var(--surface-2)}
 .thumb.tall{height:64px;width:44px}
-.row[data-r="1"] .thumb{width:64px;height:64px}
-.row[data-r="1"] .thumb.tall{width:56px;height:82px}
+.row[data-r="1"] .thumb{width:56px;height:56px}
+.row[data-r="1"] .thumb.tall{width:50px;height:74px}
 .body{flex:1;min-width:0;text-align:left;padding-block:2px}
-.body .t{font-weight:600;font-size:16.5px;line-height:1.25;overflow-wrap:anywhere}
+.body .t{font-weight:600;font-size:16.5px;line-height:1.25;overflow-wrap:break-word;text-wrap:balance}
 .row[data-r="1"] .body .t{font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:-.01em}
 .body .s{color:var(--muted);font-size:14px;margin-top:2px;overflow-wrap:anywhere}
 .body .note{color:var(--muted);font-size:13.5px;margin-top:6px;font-style:italic;overflow-wrap:anywhere}
-.mv{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;flex:none;text-align:right;min-width:38px;display:flex;flex-direction:column;gap:2px;align-items:flex-end;color:var(--muted)}
+.mv{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-top:5px;color:var(--muted)}
 .mv .up{color:var(--up)} .mv .down{color:var(--down)}
 .pill{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:6px;font-weight:500}
-.handle{width:40px;height:44px;display:grid;place-items:center;color:var(--muted);touch-action:none;cursor:grab;flex:none;border-radius:10px}
+.handle{width:36px;height:44px;display:grid;place-items:center;color:var(--muted);touch-action:none;cursor:grab;flex:none;border-radius:10px}
 .handle svg.i{width:18px;height:18px}
 
 .add{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:10}
@@ -130,7 +130,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .sg img,.sg .ph{width:40px;height:40px;border-radius:7px;object-fit:cover;flex:none;background:var(--surface-2)}
 .sg img.tall{height:56px;width:38px}
 .sg .tx{display:flex;flex-direction:column;min-width:0}
-.sg-t{font-weight:600;font-size:15.5px;overflow-wrap:anywhere}
+.sg-t{font-weight:600;font-size:15.5px;overflow-wrap:break-word}
 .sg-s{color:var(--muted);font-size:13.5px;overflow-wrap:anywhere}
 .sg.typed{color:var(--accent);font-weight:500;padding-block:10px}
 .sg.typed span{overflow-wrap:anywhere;min-width:0}
@@ -156,6 +156,10 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .actions .sp{flex:1}
 .copybox{min-height:160px;font-family:var(--f-mono);font-size:13px}
+/* Phones: while typing, the add bar jumps to the top so the keyboard can't push the page around */
+body.typing .add{top:0;bottom:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 14px;background:linear-gradient(to bottom,var(--bg) 75%,transparent);transform:translateY(var(--vv-top,0px))}
+body.typing #sugg{top:calc(74px + env(safe-area-inset-top,0px) + var(--vv-top,0px));bottom:auto;flex-direction:column;max-height:calc(var(--vv-h,60vh) - 92px - env(safe-area-inset-top,0px))}
+body.typing .fab{display:none}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;z-index:30;animation:fade .15s;white-space:nowrap}
 @keyframes fade{from{opacity:0}}
 @keyframes rise{from{transform:translateY(24px);opacity:.6}}
@@ -224,7 +228,7 @@ function addItem(title, sub='', img=''){
   const l = S.lists[S.openId]; if (!l || !title.trim()) return;
   l.items.push({ id: uid(), title: title.trim(), sub: (sub||'').trim(), img: safeImg(img), note: '', added: Date.now(), peak: l.items.length + 1, d: 0 });
   persist(l.id); render();
-  requestAnimationFrame(() => { const rows = document.querySelectorAll('.row'); rows[rows.length-1]?.scrollIntoView({block:'nearest', behavior:'smooth'}); });
+  if (!document.body.classList.contains('typing')) requestAnimationFrame(() => { const rows = document.querySelectorAll('.row'); rows[rows.length-1]?.scrollIntoView({block:'nearest', behavior:'smooth'}); });
 }
 function move(from, to){
   const l = S.lists[S.openId]; if (!l || from === to) return;
@@ -238,10 +242,21 @@ function home(){ hideSugg(); S.view = 'home'; save(); render(); window.scrollTo(
 
 /* ---------- render ---------- */
 const app = document.getElementById('app'), layer = document.getElementById('layer');
+function fitTitles(){
+  document.querySelectorAll('.row .body .t, .card h3').forEach(el => {
+    el.style.fontSize = ''; el.style.overflowWrap = 'normal';
+    let size = parseFloat(getComputedStyle(el).fontSize); const min = Math.max(13, size * 0.68);
+    while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 1; el.style.fontSize = size + 'px'; }
+    el.style.overflowWrap = '';
+  });
+}
+let fitTimer; addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitTitles, 120); });
+document.fonts?.ready.then(fitTitles);
 function render(){
   const focusId = document.activeElement?.dataset?.focus;
   const addVal = document.getElementById('addInput')?.value;
   app.innerHTML = S.view === 'list' && S.lists[S.openId] ? listView(S.lists[S.openId]) : homeView();
+  fitTitles();
   if (addVal) { const a = document.getElementById('addInput'); if (a) a.value = addVal; }
   if (focusId) document.querySelector(`[data-focus="${focusId}"]`)?.focus();
 }
@@ -303,8 +318,8 @@ function listView(l){
         <div class="t">${esc(it.title)}</div>
         ${it.sub ? `<div class="s">${esc(it.sub)}</div>` : ''}
         ${it.note ? `<div class="note">${esc(it.note)}</div>` : ''}
+        ${mv ? `<div class="mv">${mv}</div>` : ''}
       </button>
-      ${mv ? `<span class="mv">${mv}</span>` : ''}
       <span class="handle" tabindex="0" role="button" data-i="${i}" data-focus="h-${it.id}" aria-label="Move ${esc(it.title)}, rank ${r}. Drag, or use arrow keys">${ic('grip')}</span>
     </li>`;
   }).join('');
@@ -559,7 +574,8 @@ document.addEventListener('keydown', e => {
     // matches stack upward from the input (best match closest), so ArrowUp walks into them
     if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && sugItems.length) {
       e.preventDefault();
-      sugIdx = e.key === 'ArrowUp' ? Math.min(sugItems.length - 1, sugIdx + 1) : Math.max(-1, sugIdx - 1);
+      const intoList = document.body.classList.contains('typing') ? 'ArrowDown' : 'ArrowUp';
+      sugIdx = e.key === intoList ? Math.min(sugItems.length - 1, sugIdx + 1) : Math.max(-1, sugIdx - 1);
       drawSugg(); return;
     }
     if (e.key === 'Escape') { hideSugg(); return; }
@@ -572,7 +588,19 @@ document.addEventListener('keydown', e => {
 });
 sugEl.addEventListener('pointerdown', e => e.preventDefault());   // keeps the phone keyboard up
 sugEl.addEventListener('click', e => { const b = e.target.closest('[data-sg]'); if (b) chooseSugg(+b.dataset.sg); });
-document.addEventListener('focusout', e => { if (e.target.id === 'addInput') setTimeout(() => { if (document.activeElement?.id !== 'addInput') hideSugg(); }, 120); });
+document.addEventListener('focusout', e => { if (e.target.id === 'addInput') setTimeout(() => { if (document.activeElement?.id !== 'addInput') { hideSugg(); document.body.classList.remove('typing'); } }, 120); });
+
+/* phone keyboard: pin the add bar to the top of what's visible and hold the list still */
+const touch = matchMedia('(pointer: coarse)').matches, vv = window.visualViewport;
+const syncVV = () => { if (!vv) return; document.documentElement.style.setProperty('--vv-top', vv.offsetTop + 'px'); document.documentElement.style.setProperty('--vv-h', vv.height + 'px'); };
+vv?.addEventListener('resize', syncVV); vv?.addEventListener('scroll', syncVV);
+document.addEventListener('focusin', e => {
+  if (!touch || e.target.id !== 'addInput' || document.body.classList.contains('typing')) return;
+  const y = window.scrollY;
+  document.body.classList.add('typing'); syncVV();
+  // iOS tries to scroll the page toward the input; put it back
+  [0, 60, 300].forEach(t => setTimeout(() => { if (Math.abs(window.scrollY - y) > 2) window.scrollTo(0, y); syncVV(); }, t));
+});
 addEventListener('online', render); addEventListener('offline', render);
 addEventListener('storage', e => { if (e.key === LS) { load(); render(); } });
 
